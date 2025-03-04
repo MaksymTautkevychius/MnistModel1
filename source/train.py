@@ -3,7 +3,11 @@ from torch import nn
 from tqdm.auto import tqdm
 from source.helper_functions import print_train_time,accuracy_fn
 from timeit import default_timer as timer 
+import matplotlib.pyplot as plt
 
+train_losses = []
+test_losses = []
+test_accuracies = []
 
 def train_and_save(model_0, train_dataloader, test_dataloader, epochs, loss_fn, optimizer, device="cuda") -> nn.Module:
     model_0.to(device)  
@@ -26,6 +30,10 @@ def train_and_save(model_0, train_dataloader, test_dataloader, epochs, loss_fn, 
                 print(f"Looked at {batch * len(X)}/{len(train_dataloader.dataset)} samples")
 
         train_loss /= len(train_dataloader)
+        train_losses.append(train_loss)
+
+    
+
 
         ### Testing
         test_loss, test_acc = 0, 0
@@ -42,8 +50,32 @@ def train_and_save(model_0, train_dataloader, test_dataloader, epochs, loss_fn, 
             test_loss /= len(test_dataloader)
             test_acc /= len(test_dataloader)
 
+        test_losses.append(test_loss)  # Store test loss for plotting
+        test_accuracies.append(test_acc)
+
         print(f"\nTrain loss: {train_loss:.5f} | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%\n")
         if test_acc>=98.50:
             torch.save(model_0.state_dict(), "mnist_model.pth")
-
+    plot_results(epochs)
     return model_0
+
+
+def plot_results(epochs):
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(1, epochs + 1), train_losses, label="Train Loss", marker="o")
+    plt.plot(range(1, epochs + 1), test_losses, label="Test Loss", marker="s")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title("Training & Test Loss Over Epochs")
+    plt.legend()
+    plt.grid()
+    plt.show()
+    
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(1, epochs + 1), test_accuracies, label="Test Accuracy", marker="d", color="green")
+    plt.xlabel("Epochs")
+    plt.ylabel("Accuracy (%)")
+    plt.title("Test Accuracy Over Epochs")
+    plt.legend()
+    plt.grid()
+    plt.show()

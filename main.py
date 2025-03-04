@@ -6,14 +6,13 @@ from torchvision.transforms import ToTensor
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 from source.MnistModel1 import MnistModel1
-
+from source.train import train_and_save
 epochs=10
 BATCH_SIZE = 32
-#optimize=
-#loss_func=
-#model1 = MnistModel1()
+loss_fn = nn.CrossEntropyLoss()
+torch.manual_seed(42)
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+
 
 train_data = datasets.MNIST(
     root="data",
@@ -39,8 +38,9 @@ test_dataloader = DataLoader(test_data,
     batch_size=BATCH_SIZE,
     shuffle=False 
 )
+device="cuda"
+model1 = MnistModel1(1,20,len(class_names)).to(device)
+optimizer = torch.optim.SGD(params=model1.parameters(),lr=0.01)
 
-loss_fn = nn.CrossEntropyLoss() 
-optimizer = torch.optim.SGD(params=model1.parameters(), lr=0.1)
+NewModel= train_and_save(model1,train_dataloader,test_dataloader,50,loss_fn,optimizer)
 
-torch.manual_seed(42)

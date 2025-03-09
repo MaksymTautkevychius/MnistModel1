@@ -1,4 +1,4 @@
-# MnistM1 Deep Learn Model (98.80% accuracy on  Mnist dataset 10 labels)
+# CNN-DeepLearning-Network: Deep Learn Model (98.80% accuracy on  Mnist dataset 10 labels)
 ### The model architecture features two sequential convolutional layers for feature extraction, each followed by a ReLU activation and MaxPooling, culminating in a fully connected classification layer for digit recognition.
 
 
